@@ -30,7 +30,7 @@ namespace SamuraiApp.Data
             optionsBuilder.UseSqlServer(
               "Server = (localdb)\\mssqllocaldb; Database = SamuraiData; Trusted_Connection = True; ",
               options => options.MaxBatchSize(30));
-            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.EnableSensitiveDataLogging();
         }
     }
 }
