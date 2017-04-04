@@ -30,13 +30,14 @@ namespace SomeUI
             //MultipleOperations();
             //QueryAndUpdateSamuraiDisconnected();
             //QueryAndUpdateDisconnectedBattle();
-            //RawSqlQuery();
+            RawSqlQuery();
             //RawSqlCommand();
             //RawSqlCommandWithOutput();
-            AddSomeMoreSamurais();
+            //AddSomeMoreSamurais();
             //DeleteWhileTracked();
             //DeleteWhileNotTracked();
-            // DeleteMany();
+            //DeleteWhileNotTrackedOnlyId();
+            //DeleteMany();
             //AddSomeBattles();
         }
 
@@ -88,6 +89,21 @@ namespace SomeUI
             {
                 contextNewAppInstance.Samurais.Remove(samurai);
                 //contextNewAppInstance.Entry(samurai).State=EntityState.Deleted;
+                contextNewAppInstance.SaveChanges();
+            }
+
+        }
+
+        private static void DeleteWhileNotTrackedOnlyId()
+        {
+            var samuraiId = _context.Samurais.FirstOrDefault(s => s.Name == "Heihachi Hayashida").Id;
+            using (var contextNewAppInstance = new SamuraiContext())
+            {
+                // unfortunately 2 calls to the db necessary for this at the moment
+                // DbSet.Delete(int) is soon coming
+                var samurai = contextNewAppInstance.Samurais.Find(samuraiId);
+                contextNewAppInstance.Samurais.Remove(samurai);
+                // alternative: contextNewAppInstance.Entry(samurai).State=EntityState.Deleted;
                 contextNewAppInstance.SaveChanges();
             }
 
