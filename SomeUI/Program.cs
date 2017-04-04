@@ -20,8 +20,9 @@ namespace SomeUI
         private static void Main(string[] args)
         {
             _context.GetService<ILoggerFactory>().AddProvider(new MyLoggerProvider());
+
             //InsertSamurai();
-            InsertMultipleSamurais();
+            //InsertMultipleSamurais();
             //SimpleSamuraiQuery();
             //MoreQueries();
             //RetrieveAndUpdateSamurai();
@@ -32,10 +33,11 @@ namespace SomeUI
             //RawSqlQuery();
             //RawSqlCommand();
             //RawSqlCommandWithOutput();
-            //AddSomeMoreSamurais();
+            AddSomeMoreSamurais();
             //DeleteWhileTracked();
             //DeleteWhileNotTracked();
             // DeleteMany();
+            //AddSomeBattles();
         }
 
         private static void AddSomeMoreSamurais()
@@ -48,6 +50,15 @@ namespace SomeUI
                new Samurai { Name = "Kyūzō" },
                new Samurai { Name = "Gorōbei Katayama" }
              );
+            _context.SaveChanges();
+        }
+
+        private static void AddSomeBattles()
+        {
+            _context.AddRange(
+                new Battle { Name="Longjohn fight", StartDate=new DateTime(1749, 11, 03), EndDate=new DateTime(1752,03,14)},
+                new Battle { Name = "Hana bi", StartDate = new DateTime(1999, 09, 24), EndDate = new DateTime(2001, 05, 04) }
+                );
             _context.SaveChanges();
         }
 
@@ -139,10 +150,14 @@ namespace SomeUI
         private static void QueryAndUpdateDisconnectedBattle()
         {
             var battle = _context.Battles.FirstOrDefault();
-            battle.EndDate = new DateTime(1754, 12, 31);
+            battle.EndDate = new DateTime(1722, 02, 23);
             using (var contextNewAppInstance = new SamuraiContext())
             {
-                contextNewAppInstance.Battles.Update(battle);
+                /* All three produces the sanme result, battle.EndDate updates */
+                //contextNewAppInstance.Update(battle);
+                //contextNewAppInstance.Battles.Update(battle);
+                contextNewAppInstance.Entry(battle).State = EntityState.Modified;
+
                 contextNewAppInstance.SaveChanges();
             }
         }
@@ -221,8 +236,9 @@ namespace SomeUI
 
         private static void MoreQueries()
         {
-            //var name = "Julie";
-            var samurais = _context.Samurais.Find(2);
+            var name = "Julie";
+            var samurais = _context.Samurais.Where(s => s.Name == name).ToList();
+            //var samurais = _context.Samurais.Find(2);
         }
     }
 }
